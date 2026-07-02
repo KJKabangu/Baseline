@@ -1,8 +1,13 @@
-# Build + Audit
+# Baseline
 
-Freelance business site for Kindja Kabangu — custom ops tools and security audits for local trade and logistics businesses.
+Freelance business site for Kindja Kabangu ("Build + Audit") — custom ops tools and security audits for local trade and logistics businesses. Visitors can book a service directly from the site.
 
 Static HTML/CSS/JS, no build step or framework.
+
+## Booking
+
+- Service request form posts to Formspree: `https://formspree.io/f/xlgyoljd`.
+- "Book a call" button links to Calendly: `https://calendly.com/kjkabangu8/30min`.
 
 ## Run locally
 
