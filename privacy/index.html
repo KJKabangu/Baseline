@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0a0e14">
+<title>Privacy — Baseline</title>
+<meta name="description" content="What Baseline collects when you book a service or use the client portal, and how it's used.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230a0e14'/%3E%3Ctext x='16' y='22' font-family='ui-monospace,Consolas,monospace' font-size='16' fill='%2322d3ee' text-anchor='middle'%3EB_%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap header-row">
+    <a href="/" class="logo">Baseline<span class="cursor">_</span></a>
+    <nav class="site-nav">
+      <a href="/">Back to site</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="section">
+    <div class="wrap">
+      <p class="eyebrow"><span class="n">Legal</span><span>Privacy</span></p>
+      <h1>Privacy policy</h1>
+      <p class="section-intro">Last updated July 2026. This page covers what's collected through baseline-kabangu.com (or wherever this site is currently hosted) and why.</p>
+
+      <h2>What I collect</h2>
+      <p>When you submit the booking form, I collect your name, email, business name, project timeline, and whatever details you write in the message field. That information is sent to Formspree (which emails it to me) and stored in a Supabase database so it shows up in my admin dashboard.</p>
+      <p>If you're an invited client using the client portal at <a href="/portal/">/portal/</a>, sign-in is via a one-time "magic link" emailed to you through Supabase Auth — I never see or store a password.</p>
+      <p>If you pay a deposit through the portal, card details are entered directly on a Stripe-hosted payment page. I never see or store your card number — Stripe handles that, and Baseline only ever sees the resulting payment status.</p>
+      <p>Vercel Speed Insights collects anonymous, aggregated page-performance data (load times, general location by region) — no personal identifiers, no cross-site tracking, no advertising cookies.</p>
+
+      <h2>How it's used</h2>
+      <p>Solely to respond to your inquiry, manage your booking, schedule a kickoff time, and send invoices if you become a client. It is never sold, and never used for marketing outreach beyond replying to what you submitted.</p>
+
+      <h2>Who it's shared with</h2>
+      <p>Only the service providers that make the site work: Formspree (form delivery), Supabase (database and authentication), Stripe (payment processing), and Vercel (hosting and anonymous analytics). Each of these processes data under their own privacy policy as a data processor — none of them are permitted to use your information for their own purposes.</p>
+
+      <h2>Data retention &amp; deletion</h2>
+      <p>Booking and invoice records are kept as long as needed for the business relationship and basic recordkeeping. If you'd like your information deleted, email <a href="mailto:kjkabangu8@gmail.com?subject=Data%20deletion%20request">kjkabangu8@gmail.com</a> and I'll remove it, short of anything I'm required to retain for tax or accounting purposes.</p>
+
+      <h2>Contact</h2>
+      <p>Questions about this policy or your data: <a href="mailto:kjkabangu8@gmail.com">kjkabangu8@gmail.com</a>.</p>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span>Baseline &middot; Kindja Kabangu</span>
+    <span><a href="/">Home</a></span>
+  </div>
+</footer>
+
+</body>
+</html>
