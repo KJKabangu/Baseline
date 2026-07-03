@@ -133,6 +133,10 @@
       </div>
 
       <form id="bookingForm" class="booking-form" action="https://formspree.io/f/xlgyoljd" method="POST">
+        <div class="hp-field" aria-hidden="true">
+          <label for="company_site">Leave this field blank</label>
+          <input id="company_site" name="company_site" type="text" tabindex="-1" autocomplete="off">
+        </div>
         <div class="form-row">
           <label for="package">Package</label>
           <select id="package" name="package" required>
@@ -184,10 +188,11 @@
 <footer class="site-footer">
   <div class="wrap">
     <span>Baseline &middot; Kindja Kabangu</span>
-    <span id="year"></span>
+    <span><a href="/portal/">Client login</a> &middot; <span id="year"></span></span>
   </div>
 </footer>
 
 <script src="script.js"></script>
+<script defer src="/_vercel/insights/script.js"></script>
 </body>
 </html>

@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0a0e14">
+<title>Admin — Baseline</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230a0e14'/%3E%3Ctext x='16' y='22' font-family='ui-monospace,Consolas,monospace' font-size='16' fill='%2322d3ee' text-anchor='middle'%3EB_%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body class="dash-body">
+
+<header class="site-header">
+  <div class="wrap header-row">
+    <a href="/" class="logo">Baseline<span class="cursor">_</span></a>
+    <div class="dash-whoami" id="whoami" hidden>
+      <span id="whoamiEmail"></span>
+      <button type="button" class="btn btn-ghost btn-small" id="signOutBtn">Sign out</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap dash-main">
+
+  <section id="loginView" class="dash-panel">
+    <p class="eyebrow"><span class="n">Admin</span><span>Sign in</span></p>
+    <h1>Admin dashboard</h1>
+    <p class="section-intro">Enter the owner email to get a one-time magic link.</p>
+    <form id="loginForm" class="dash-form-inline">
+      <input id="loginEmail" type="email" placeholder="you@example.com" autocomplete="email" required>
+      <button type="submit" class="btn btn-primary">Send magic link</button>
+    </form>
+    <p class="form-status" id="loginStatus" role="status" aria-live="polite"></p>
+  </section>
+
+  <section id="deniedView" class="dash-panel" hidden>
+    <p class="eyebrow"><span class="n">Admin</span><span>Not authorized</span></p>
+    <h1>This account isn't an admin</h1>
+    <p class="section-intro">Signed in, but this email doesn't have admin access on Baseline.</p>
+  </section>
+
+  <section id="dashboardView" hidden>
+
+    <section class="dash-panel">
+      <p class="eyebrow"><span class="n">01</span><span>Bookings</span></p>
+      <h2>Bookings</h2>
+      <div class="table-scroll">
+        <table class="dash-table" id="bookingsTable">
+          <thead>
+            <tr>
+              <th>Created</th>
+              <th>Name / Email</th>
+              <th>Business</th>
+              <th>Package</th>
+              <th>Timeline</th>
+              <th>Details</th>
+              <th>Status</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody id="bookingsBody"></tbody>
+        </table>
+      </div>
+      <p class="dash-empty" id="bookingsEmpty" hidden>No bookings yet.</p>
+    </section>
+
+    <section class="dash-panel">
+      <p class="eyebrow"><span class="n">02</span><span>Availability</span></p>
+      <h2>Availability slots</h2>
+      <form id="slotForm" class="dash-form-inline">
+        <label class="dash-inline-field">
+          <span>Start</span>
+          <input id="slotStart" type="datetime-local" required>
+        </label>
+        <label class="dash-inline-field">
+          <span>End</span>
+          <input id="slotEnd" type="datetime-local" required>
+        </label>
+        <button type="submit" class="btn btn-primary">Add slot</button>
+      </form>
+      <p class="form-status" id="slotStatus" role="status" aria-live="polite"></p>
+      <div class="table-scroll">
+        <table class="dash-table" id="slotsTable">
+          <thead>
+            <tr>
+              <th>Start</th>
+              <th>End</th>
+              <th>Status</th>
+              <th>Booked by</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="slotsBody"></tbody>
+        </table>
+      </div>
+      <p class="dash-empty" id="slotsEmpty" hidden>No slots yet.</p>
+    </section>
+
+    <section class="dash-panel">
+      <p class="eyebrow"><span class="n">03</span><span>Invoices</span></p>
+      <h2>Invoices</h2>
+      <form id="invoiceForm" class="dash-form-grid">
+        <label class="dash-inline-field">
+          <span>Client</span>
+          <select id="invoiceClient" required></select>
+        </label>
+        <label class="dash-inline-field">
+          <span>Booking (optional)</span>
+          <select id="invoiceBooking">
+            <option value="">— none —</option>
+          </select>
+        </label>
+        <label class="dash-inline-field">
+          <span>Amount (USD)</span>
+          <input id="invoiceAmount" type="number" min="0" step="0.01" required>
+        </label>
+        <label class="dash-inline-field">
+          <span>Due date</span>
+          <input id="invoiceDue" type="date">
+        </label>
+        <label class="dash-inline-field dash-inline-field-wide">
+          <span>Description</span>
+          <input id="invoiceDescription" type="text" maxlength="500">
+        </label>
+        <button type="submit" class="btn btn-primary">Create invoice</button>
+      </form>
+      <p class="form-status" id="invoiceStatus" role="status" aria-live="polite"></p>
+      <div class="table-scroll">
+        <table class="dash-table" id="invoicesTable">
+          <thead>
+            <tr>
+              <th>Client</th>
+              <th>Amount</th>
+              <th>Description</th>
+              <th>Due</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="invoicesBody"></tbody>
+        </table>
+      </div>
+      <p class="dash-empty" id="invoicesEmpty" hidden>No invoices yet.</p>
+    </section>
+
+  </section>
+
+</main>
+
+<script type="module" src="admin.js"></script>
+</body>
+</html>

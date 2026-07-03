@@ -36,10 +36,30 @@ bookingForm.addEventListener("submit", async (e) => {
   formStatus.className = "form-status";
   submitBtn.disabled = true;
 
+  const formData = new FormData(bookingForm);
+
+  // Best-effort mirror into Supabase so it shows up in the admin dashboard.
+  // Formspree (below) remains the source of truth for the visitor-facing
+  // success/failure message, so a Supabase outage never blocks a booking.
+  if (!formData.get("company_site")) {
+    import("./supabase-client.js")
+      .then(({ supabase }) =>
+        supabase.from("bookings").insert({
+          name: formData.get("name"),
+          email: formData.get("email"),
+          business: formData.get("business") || null,
+          package: formData.get("package"),
+          timeline: formData.get("timeline"),
+          details: formData.get("details"),
+        })
+      )
+      .catch((err) => console.error("Supabase booking insert failed:", err));
+  }
+
   try {
     const response = await fetch(bookingForm.action, {
       method: "POST",
-      body: new FormData(bookingForm),
+      body: formData,
       headers: { Accept: "application/json" },
     });
 
