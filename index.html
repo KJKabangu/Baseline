@@ -222,7 +222,7 @@
         <p class="book-fallback">Prefer email? <a href="mailto:kjkabangu8@gmail.com?subject=Project%20inquiry">kjkabangu8@gmail.com</a></p>
       </div>
 
-      <form id="bookingForm" class="booking-form" action="https://formspree.io/f/xlgyoljd" method="POST">
+      <form id="bookingForm" class="booking-form" action="https://formspree.io/f/xlgyoljd" method="POST" novalidate>
         <div class="hp-field" aria-hidden="true">
           <label for="company_site">Leave this field blank</label>
           <input id="company_site" name="company_site" type="text" tabindex="-1" autocomplete="off">
@@ -267,7 +267,10 @@
           <label for="details">What are you trying to fix?</label>
           <textarea id="details" name="details" rows="4" placeholder="Tell me a bit about the problem, current workflow, or site you want audited." required></textarea>
         </div>
-        <button type="submit" class="btn btn-primary btn-submit">Send booking request</button>
+        <button type="submit" class="btn btn-primary btn-submit">
+          <span class="btn-label">Send booking request</span>
+          <span class="btn-spinner" aria-hidden="true"></span>
+        </button>
         <p class="form-status" id="formStatus" role="status" aria-live="polite"></p>
       </form>
     </div>

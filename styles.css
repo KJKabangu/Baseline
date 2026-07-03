@@ -418,7 +418,41 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   border-color: var(--accent);
 }
 .booking-form textarea { resize: vertical; }
-.btn-submit { align-self: flex-start; }
+
+.booking-form select.flash {
+  animation: select-flash 900ms ease-out;
+}
+@keyframes select-flash {
+  0% { box-shadow: 0 0 0 0 rgba(34, 211, 238, 0.55); border-color: var(--accent); background-color: var(--accent-soft); }
+  100% { box-shadow: 0 0 0 8px rgba(34, 211, 238, 0); border-color: var(--line); background-color: var(--bg); }
+}
+
+.booking-form .invalid { border-color: #f87171; }
+.field-error {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: #f87171;
+}
+
+.btn-submit {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.btn-spinner {
+  display: none;
+  width: 0.85rem;
+  height: 0.85rem;
+  border: 2px solid rgba(4, 20, 26, 0.35);
+  border-top-color: var(--accent-ink);
+  border-radius: 50%;
+  animation: btn-spin 0.6s linear infinite;
+}
+.btn-submit.is-loading .btn-spinner { display: inline-block; }
+@keyframes btn-spin { to { transform: rotate(360deg); } }
+
 .form-status {
   margin: 0;
   font-family: var(--font-mono);
@@ -472,6 +506,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .logo .cursor { animation: none; }
+  .booking-form select.flash { animation: none; }
+  .btn-spinner { animation: none; }
 }
 
 /* Honeypot (spam trap, must stay visually hidden but not display:none) */
