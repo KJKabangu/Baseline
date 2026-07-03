@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "@supabase/supabase-js": "^2.110.0",
+    "@vercel/speed-insights": "^2.0.0",
+    "stripe": "^22.3.0"
+  }
+}

@@ -189,16 +189,24 @@ revoke execute on function public.claim_slot(uuid, uuid) from anon, public;
 grant execute on function public.claim_slot(uuid, uuid) to authenticated;
 
 -- ---------- invoices ----------
+-- deposit_amount is a generated column (always exactly 25% of amount) so the
+-- figure charged via Stripe can never drift from what's stored server-side.
+-- deposit_paid / stripe_* columns are written only by the /api serverless
+-- functions using the service_role key -- clients have select-only access.
 create table public.invoices (
-  id          uuid primary key default gen_random_uuid(),
-  client_id   uuid not null references public.profiles(id) on delete cascade,
-  booking_id  uuid references public.bookings(id) on delete set null,
-  amount      numeric(10, 2) not null check (amount >= 0),
-  description text,
-  status      text not null default 'draft'
-              check (status in ('draft', 'sent', 'paid')),
-  due_date    date,
-  created_at  timestamptz not null default now()
+  id                        uuid primary key default gen_random_uuid(),
+  client_id                 uuid not null references public.profiles(id) on delete cascade,
+  booking_id                uuid references public.bookings(id) on delete set null,
+  amount                    numeric(10, 2) not null check (amount >= 0),
+  deposit_amount            numeric(10, 2) generated always as (round(amount * 0.25, 2)) stored,
+  deposit_paid              boolean not null default false,
+  stripe_checkout_session_id text,
+  stripe_payment_intent_id   text,
+  description               text,
+  status                    text not null default 'draft'
+                            check (status in ('draft', 'sent', 'paid')),
+  due_date                  date,
+  created_at                timestamptz not null default now()
 );
 
 alter table public.invoices enable row level security;

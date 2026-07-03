@@ -15,6 +15,7 @@ const bookingsEmpty = document.getElementById("bookingsEmpty");
 
 const invoicesBody = document.getElementById("invoicesBody");
 const invoicesEmpty = document.getElementById("invoicesEmpty");
+const paymentBanner = document.getElementById("paymentBanner");
 
 let currentUserId = null;
 
@@ -31,6 +32,26 @@ function fmtDateTime(iso) {
     timeStyle: "short",
   });
 }
+
+// ---------- payment return banner ----------
+
+(function showPaymentBanner() {
+  const params = new URLSearchParams(window.location.search);
+  const payment = params.get("payment");
+  if (!payment) return;
+
+  if (payment === "success") {
+    paymentBanner.textContent = "Payment received — thank you! It may take a moment to show as paid below.";
+    paymentBanner.className = "form-status ok";
+  } else if (payment === "cancelled") {
+    paymentBanner.textContent = "Payment was cancelled — no charge was made.";
+    paymentBanner.className = "form-status err";
+  }
+
+  params.delete("payment");
+  const cleanUrl = window.location.pathname + (params.toString() ? `?${params}` : "");
+  window.history.replaceState({}, "", cleanUrl);
+})();
 
 // ---------- auth ----------
 
@@ -208,15 +229,60 @@ function renderInvoices(rows) {
 
   for (const row of rows) {
     const tr = document.createElement("tr");
+
+    let depositCell;
+    if (row.deposit_paid) {
+      depositCell = `<span class="status-badge status-paid">Paid — $${Number(row.deposit_amount).toFixed(2)}</span>`;
+    } else {
+      depositCell = `<button type="button" class="btn btn-primary btn-small pay-deposit-btn" data-invoice-id="${row.id}">Pay deposit — $${Number(row.deposit_amount).toFixed(2)}</button>`;
+    }
+
     tr.innerHTML = `
       <td>${escapeHtml(row.description || "—")}</td>
       <td>$${Number(row.amount).toFixed(2)}</td>
       <td>${row.due_date || "—"}</td>
       <td><span class="status-badge status-${row.status}">${row.status}</span></td>
+      <td>${depositCell}</td>
     `;
     invoicesBody.appendChild(tr);
   }
 }
+
+invoicesBody.addEventListener("click", async (e) => {
+  if (!e.target.classList.contains("pay-deposit-btn")) return;
+  const btn = e.target;
+  const invoiceId = btn.dataset.invoiceId;
+  const originalLabel = btn.textContent;
+
+  btn.disabled = true;
+  btn.textContent = "Redirecting to payment...";
+  paymentBanner.textContent = "";
+
+  try {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    const response = await fetch("/api/create-checkout-session", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session.access_token}`,
+      },
+      body: JSON.stringify({ invoiceId }),
+    });
+
+    const body = await response.json();
+    if (!response.ok) throw new Error(body.error || "Could not start payment.");
+
+    window.location.href = body.url;
+  } catch (err) {
+    paymentBanner.textContent = err.message;
+    paymentBanner.className = "form-status err";
+    btn.disabled = false;
+    btn.textContent = originalLabel;
+  }
+});
 
 // ---------- utils ----------
 

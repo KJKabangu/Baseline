@@ -2,7 +2,7 @@
 
 Freelance business site for Kindja Kabangu ("Build + Audit") — custom ops tools and security audits for local trade and logistics businesses. Visitors can book a service directly from the site.
 
-Static HTML/CSS/JS, no build step or framework.
+Static HTML/CSS/JS, no build step or framework, plus two small Vercel serverless functions under `/api` that exist solely to talk to Stripe (see [Payments](#payments-stripe-deposits) below) — everything else is served as-is with no server.
 
 ## Booking
 
@@ -26,7 +26,7 @@ npx serve .
 
 ## Backend (Supabase)
 
-Admin dashboard (`/admin/`) and client portal (`/portal/`) run on Supabase (Postgres + Auth), no server/serverless functions. The public booking form still posts to Formspree as the source of truth for the visitor-facing success message; it also mirrors each submission into Supabase (best-effort, fire-and-forget) so it shows up in the admin dashboard.
+Admin dashboard (`/admin/`) and client portal (`/portal/`) run on Supabase (Postgres + Auth). The public booking form still posts to Formspree as the source of truth for the visitor-facing success message; it also mirrors each submission into Supabase (best-effort, fire-and-forget) so it shows up in the admin dashboard.
 
 **One-time setup:**
 
@@ -40,4 +40,27 @@ Admin dashboard (`/admin/`) and client portal (`/portal/`) run on Supabase (Post
 
 **Per-client onboarding (ongoing):** when accepting a booking, invite that client's email the same way (Authentication → Users → Invite user) so they can sign into `/portal/`.
 
-**Out of scope for v1:** in-app client invitations (needs the `service_role` key → needs a server), rate limiting/CAPTCHA on the public booking insert (honeypot field only), and payment collection — invoices are status-tracking only.
+**Out of scope for v1:** in-app client invitations (needs the `service_role` key server-side, same mechanism the Stripe functions below now use, but no UI has been built for it), rate limiting/CAPTCHA on the public booking insert (honeypot field only).
+
+## Payments (Stripe deposits)
+
+When admin creates an invoice, a `deposit_amount` column in Postgres (a **generated column**, always exactly 25% of `amount`) is what actually gets charged — the browser never gets to supply or influence that number. Once an invoice's status is `sent`, the client can pay the deposit from `/portal/`, which redirects to a Stripe-hosted Checkout page. Two serverless functions make this possible:
+
+- `/api/create-checkout-session` — takes only an `invoiceId` from the client, re-reads the deposit amount server-side (as the calling user, so the same RLS policy that already governs invoice reads enforces ownership), and creates the Stripe Checkout Session.
+- `/api/stripe-webhook` — Stripe calls this after a successful payment; it's the authoritative place `deposit_paid` gets flipped to `true` (not the browser redirect back to the portal, which can be interrupted).
+
+The full invoice `status` (draft/sent/paid) is still set manually by the admin and is unrelated to the deposit — this only automates the 25% deposit, not full project payment.
+
+**One-time setup, in addition to the Supabase steps above:**
+
+1. Create an account at [stripe.com](https://stripe.com) (test mode is fine to start).
+2. Developers → API keys → copy the **Secret key**.
+3. In Vercel → Project Settings → Environment Variables, add (server-side only — none of these go in any file in this repo):
+   - `SUPABASE_URL` — same Project URL used in `supabase-client.js`.
+   - `SUPABASE_ANON_KEY` — same anon key used in `supabase-client.js`.
+   - `SUPABASE_SERVICE_ROLE_KEY` — from Supabase → Project Settings → API. This is the one key that must never be committed; it only ever lives in Vercel's environment variable store.
+   - `STRIPE_SECRET_KEY` — from Stripe step 2.
+   - `SITE_URL` — your production domain, e.g. `https://baseline-xyz.vercel.app`, used to build the Stripe success/cancel redirect URLs.
+4. Redeploy (env var changes need a new deployment to take effect).
+5. Stripe dashboard → Developers → Webhooks → Add endpoint → URL: `https://<domain>/api/stripe-webhook`, event: `checkout.session.completed`. Copy the **Signing secret** it generates and add it to Vercel as `STRIPE_WEBHOOK_SECRET`, then redeploy again.
+6. Test with a [Stripe test card](https://docs.stripe.com/testing) (`4242 4242 4242 4242`, any future date/CVC) against an invoice with status `sent` before switching the Stripe account out of test mode.

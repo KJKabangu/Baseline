@@ -302,12 +302,17 @@ function renderInvoices(rows) {
       (s) => `<option value="${s}" ${s === row.status ? "selected" : ""}>${s}</option>`
     ).join("");
 
+    const depositLabel = row.deposit_paid
+      ? `Paid — $${Number(row.deposit_amount).toFixed(2)}`
+      : `Unpaid — $${Number(row.deposit_amount).toFixed(2)}`;
+
     tr.innerHTML = `
       <td>${escapeHtml(clientLabel)}</td>
       <td>$${Number(row.amount).toFixed(2)}</td>
       <td>${escapeHtml(row.description || "—")}</td>
       <td>${row.due_date || "—"}</td>
       <td><select class="invoice-status-select" data-id="${row.id}">${statusOptions}</select></td>
+      <td><span class="status-badge ${row.deposit_paid ? "status-paid" : "status-sent"}">${depositLabel}</span></td>
     `;
     invoicesBody.appendChild(tr);
   }
