@@ -18,6 +18,9 @@
 
 * { box-sizing: border-box; }
 
+/* The hidden attribute must win even over classes that set display: flex/grid */
+[hidden] { display: none !important; }
+
 html { scroll-behavior: smooth; }
 
 body {
@@ -250,6 +253,15 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .card .price span { font-weight: 400; color: var(--ink-dim); }
 .card > p:not(.price):not(.card-tag) { color: var(--ink-soft); font-size: 0.92rem; flex: 1; margin: 0 0 1.25rem; }
 .btn-book { align-self: flex-start; padding: 0.6rem 1.1rem; font-size: 0.78rem; }
+
+.cards-subhead { margin-top: 3.25rem; }
+.cards-subhead h3 {
+  font-size: 1.35rem;
+  margin: 0 0 0.75rem;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+.cards-subhead .section-intro { margin-bottom: 1.75rem; }
 
 /* How it works */
 .steps {
@@ -563,6 +575,17 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .dash-form-inline input {
   flex: 1;
   min-width: 14rem;
+}
+
+.login-sent { margin: 1rem 0; }
+.login-sent p { margin: 0 0 0.5rem; color: var(--ink-soft); }
+.login-sent strong { color: var(--ink); }
+.login-sent-hint { font-size: 0.9rem; }
+.login-sent-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 1.1rem 0 0.5rem;
 }
 
 .dash-form-grid {

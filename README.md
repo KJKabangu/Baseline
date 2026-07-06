@@ -1,8 +1,24 @@
 # Baseline
 
-Freelance business site for Kindja Kabangu ("Build + Audit") — custom ops tools and security audits for local trade and logistics businesses. Visitors can book a service directly from the site.
+Freelance business site for Kindja Kabangu ("Audit · Build · Care") — fixed-price ops software and standalone security services for local trade and logistics businesses. Visitors can book a service directly from the site.
 
 Static HTML/CSS/JS, no build step or framework, plus two small Vercel serverless functions under `/api` that exist solely to talk to Stripe (see [Payments](#payments-stripe-deposits) below) — everything else is served as-is with no server.
+
+## Services
+
+The core path (each step stands alone; every build starts with the audit):
+
+- **Ops Audit** — $2,500, one week. Diagnostic of dispatch/invoicing/scheduling workflows with a prioritized report and a fixed build quote.
+- **Baseline Build** — $8,000–$15,000, fixed price. Implementation of the audit findings (job tracking, fleet & inventory management, portals, invoicing, scheduling).
+- **Baseline Care** — $500–$1,500/month. Hosting, security monitoring, and small changes on retainer.
+
+Standalone security services (no audit required; all begin with a signed authorization agreement):
+
+- **Website Security Checkup** — $1,200, one week. Injection/credential/misconfiguration scan plus email security (SPF/DKIM/DMARC) and MFA review.
+- **Phishing Simulation & Training** — $900. Simulated phishing campaign plus a training workshop; quarterly re-runs available through Baseline Care.
+- **Access & Offboarding Audit** — $750, three days. "Who can touch what" review with an access map, stale-account removal, and an offboarding checklist.
+
+Prices shown here mirror `index.html` — if one changes, update both.
 
 ## Booking
 

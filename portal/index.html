@@ -32,6 +32,15 @@
       <button type="submit" class="btn btn-primary">Send magic link</button>
     </form>
     <p class="form-status" id="loginStatus" role="status" aria-live="polite"></p>
+    <div id="loginSent" class="login-sent" hidden>
+      <p>A sign-in link is on its way to <strong id="sentEmail"></strong>.</p>
+      <p class="login-sent-hint">It usually arrives within a minute. If you don't see it, check your spam or junk folder &mdash; or resend it below.</p>
+      <div class="login-sent-actions">
+        <button type="button" class="btn btn-primary" id="resendBtn">Resend link</button>
+        <button type="button" class="btn btn-ghost" id="changeEmailBtn">Use a different email</button>
+      </div>
+      <p class="form-status" id="resendStatus" role="status" aria-live="polite"></p>
+    </div>
   </section>
 
   <section id="dashboardView" hidden>

@@ -10,6 +10,11 @@ const signOutBtn = document.getElementById("signOutBtn");
 const loginForm = document.getElementById("loginForm");
 const loginEmail = document.getElementById("loginEmail");
 const loginStatus = document.getElementById("loginStatus");
+const loginSent = document.getElementById("loginSent");
+const sentEmail = document.getElementById("sentEmail");
+const resendBtn = document.getElementById("resendBtn");
+const changeEmailBtn = document.getElementById("changeEmailBtn");
+const resendStatus = document.getElementById("resendStatus");
 
 const bookingsBody = document.getElementById("bookingsBody");
 const bookingsEmpty = document.getElementById("bookingsEmpty");
@@ -55,6 +60,7 @@ function fmtDateTime(iso) {
 
 async function handleSession(session) {
   if (!session) {
+    resetLoginState();
     showView("login");
     return;
   }
@@ -79,26 +85,90 @@ async function handleSession(session) {
 supabase.auth.getSession().then(({ data }) => handleSession(data.session));
 supabase.auth.onAuthStateChange((_event, session) => handleSession(session));
 
-loginForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  loginStatus.textContent = "Sending magic link...";
-  loginStatus.className = "form-status";
+// Supabase only sends one magic link per address per 60 seconds, so the
+// resend button stays disabled with a countdown until a resend can succeed.
+const RESEND_COOLDOWN_S = 60;
+let resendTimer = null;
 
-  const { error } = await supabase.auth.signInWithOtp({
-    email: loginEmail.value.trim(),
+function sendMagicLink(email) {
+  return supabase.auth.signInWithOtp({
+    email,
     options: {
       shouldCreateUser: false,
       emailRedirectTo: window.location.origin + "/admin/",
     },
   });
+}
+
+function startResendCooldown() {
+  let remaining = RESEND_COOLDOWN_S;
+  resendBtn.disabled = true;
+  resendBtn.textContent = `Resend link (${remaining}s)`;
+  clearInterval(resendTimer);
+  resendTimer = setInterval(() => {
+    remaining -= 1;
+    if (remaining <= 0) {
+      clearInterval(resendTimer);
+      resendBtn.disabled = false;
+      resendBtn.textContent = "Resend link";
+    } else {
+      resendBtn.textContent = `Resend link (${remaining}s)`;
+    }
+  }, 1000);
+}
+
+function resetLoginState() {
+  clearInterval(resendTimer);
+  loginSent.hidden = true;
+  loginForm.hidden = false;
+  loginStatus.textContent = "";
+  loginStatus.className = "form-status";
+  resendStatus.textContent = "";
+  resendStatus.className = "form-status";
+}
+
+loginForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  loginStatus.textContent = "Sending magic link...";
+  loginStatus.className = "form-status";
+
+  const email = loginEmail.value.trim();
+  const { error } = await sendMagicLink(email);
 
   if (error) {
     loginStatus.textContent = error.message;
     loginStatus.className = "form-status err";
-  } else {
-    loginStatus.textContent = "Check your email for the sign-in link.";
-    loginStatus.className = "form-status ok";
+    return;
   }
+
+  loginStatus.textContent = "";
+  sentEmail.textContent = email;
+  loginForm.hidden = true;
+  loginSent.hidden = false;
+  startResendCooldown();
+});
+
+resendBtn.addEventListener("click", async () => {
+  resendBtn.disabled = true;
+  resendStatus.textContent = "Resending...";
+  resendStatus.className = "form-status";
+
+  const { error } = await sendMagicLink(sentEmail.textContent);
+
+  if (error) {
+    resendStatus.textContent = error.message;
+    resendStatus.className = "form-status err";
+    resendBtn.disabled = false;
+  } else {
+    resendStatus.textContent = "A new link is on its way.";
+    resendStatus.className = "form-status ok";
+    startResendCooldown();
+  }
+});
+
+changeEmailBtn.addEventListener("click", () => {
+  resetLoginState();
+  loginEmail.focus();
 });
 
 signOutBtn.addEventListener("click", () => supabase.auth.signOut());
